@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
+const flash = require('connect-flash');
 const Joi = require('joi');
 const {campgroundSchema, reviewSchema} = require('./schemas.js');
 const catchAsync = require('./utils/catchAsync');
@@ -46,6 +47,14 @@ const sessionCofig = {
     }
 }
 app.use(session(sessionCofig));
+app.use(flash());
+
+//define middleware to use flash befor routes
+app.use((req,res, next)=>{
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
 
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews)
